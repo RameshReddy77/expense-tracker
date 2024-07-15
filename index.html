@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Expense Tracker</title>
+   
+</head>
+<body>
+    <div class="container">
+        <h1>Expense Tracker</h1>
+        <form id="expense-form">
+            <label for="expense-description">Description:</label>
+            <input type="text" id="expense-description" placeholder="Enter description" required>
+            <label for="expense-amount">Amount:</label>
+            <input type="number" id="expense-amount" placeholder="Enter amount" required>
+            <label for="expense-category">Category:</label>
+            <input type="text" id="expense-category" placeholder="Enter category">
+            <button type="submit">Add Expense</button>
+        </form>
+        <div id="expense-list"></div>
+        <div id="total-expenses">Total Expenses: $0</div>
+    </div>
+    <style>
+        body {
+    font-family: Arial, sans-serif;
+    background-color: #f2f2f2;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    margin: 0;
+}
+
+.container {
+    text-align: center;
+    max-width: 600px;
+    background-color: #fff;
+    padding: 20px;
+    border-radius: 10px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+}
+
+h1 {
+    margin-bottom: 20px;
+}
+
+form {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+label {
+    margin-top: 10px;
+    display: block;
+}
+
+input[type="text"],
+input[type="number"] {
+    width: 100%;
+    padding: 8px;
+    margin-top: 5px;
+    margin-bottom: 10px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    box-sizing: border-box;
+}
+
+button {
+    background-color: #4CAF50;
+    color: white;
+    padding: 10px 20px;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+}
+
+button:hover {
+    background-color: #45a049;
+}
+
+#expense-list {
+    margin-top: 20px;
+    text-align: left;
+}
+
+#expense-list div {
+    border-bottom: 1px solid #ccc;
+    padding: 10px 0;
+}
+
+#total-expenses {
+    margin-top: 20px;
+    font-weight: bold;
+}
+
+    </style>
+    <script >
+        document.addEventListener('DOMContentLoaded', function() {
+    const expenseForm = document.getElementById('expense-form');
+    const expenseList = document.getElementById('expense-list');
+    const totalExpenses = document.getElementById('total-expenses');
+
+   
+    let expenses = JSON.parse(localStorage.getItem('expenses')) || [];
+
+   
+    displayExpenses();
+
+   
+    expenseForm.addEventListener('submit', function(event) {
+        event.preventDefault();
+
+        const description = document.getElementById('expense-description').value;
+        const amount = parseFloat(document.getElementById('expense-amount').value);
+        const category = document.getElementById('expense-category').value;
+
+        if (description && amount) {
+            const expense = {
+                id: new Date().getTime(),
+                description: description,
+                amount: amount,
+                category: category
+            };
+
+            expenses.push(expense);
+            saveExpenses();
+            displayExpenses();
+            expenseForm.reset();
+        } else {
+            alert('Please enter both description and amount.');
+        }
+    });
+
+    // Save expenses to localStorage
+    function saveExpenses() {
+        localStorage.setItem('expenses', JSON.stringify(expenses));
+    }
+
+    // Display expenses in the list
+    function displayExpenses() {
+        expenseList.innerHTML = '';
+        let total = 0;
+
+        expenses.forEach(function(expense) {
+            const expenseItem = document.createElement('div');
+            expenseItem.innerHTML = `
+                <strong>${expense.description}</strong> - $${expense.amount} (${expense.category})
+            `;
+            expenseList.appendChild(expenseItem);
+
+            total += expense.amount;
+        });
+
+        totalExpenses.textContent = `Total Expenses: $${total.toFixed(2)}`;
+    }
+});
+
+    </script>
+</body>
+</html>
